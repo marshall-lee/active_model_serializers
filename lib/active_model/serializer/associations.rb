@@ -136,8 +136,12 @@ module ActiveModel
           if !option(:embed_key) && !source_serializer.respond_to?(@name.to_s) && source_serializer.object.respond_to?(ids_key)
             source_serializer.object.read_attribute_for_serialization(ids_key)
           else
-            associated_object.map do |item|
-              item.read_attribute_for_serialization(embed_key)
+            if embed_key == :id and associated_object.respond_to?(:ids)
+              associated_object.ids
+            else
+              associated_object.map do |item|
+                item.read_attribute_for_serialization(embed_key)
+              end
             end
           end
         end
